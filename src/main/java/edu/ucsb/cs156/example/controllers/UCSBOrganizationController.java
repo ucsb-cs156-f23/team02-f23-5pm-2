@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @Tag(name = "UCSBOrganizations")
-@RequestMapping("/api/ucsborganizations")
+@RequestMapping("/api/UCSBOrganization")
 @RestController
 @Slf4j
 public class UCSBOrganizationController extends ApiController {
@@ -50,7 +50,7 @@ public class UCSBOrganizationController extends ApiController {
         {
 
         UCSBOrganization commons = new UCSBOrganization();
-        commons.setOrgcode(orgCode);
+        commons.setOrgCode(orgCode);
         commons.setOrgTranslationShort(orgTranslationShort);
         commons.setOrgTranslation(orgTranslation);
         commons.setInactive(inactive);
