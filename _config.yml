@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-f23/team02-f23-5pm-2
 owner: ucsb-cs156-f23
 repo_name: team02-f23-5pm-2
-pull_requests: [{"author":{"id":"U_kgDOBtX_Tw","is_bot":false,"login":"bradenc24","name":""},"headRefName":"Braden-HelpRequestTable-Controller","number":46,"title":"Create HelpRequest Controller, add GET (index) and POST (create) methods ","url":"https://github.com/ucsb-cs156-f23/team02-f23-5pm-2/pull/46"}]
+pull_requests: [{"author":{"id":"U_kgDOBh9GEw","is_bot":false,"login":"ChinDandekar","name":"ChinDandekar"},"headRefName":"chinmay-Dining","number":47,"title":"Added Controller for UCSBDiningCommonsMenuItems and tests for controller","url":"https://github.com/ucsb-cs156-f23/team02-f23-5pm-2/pull/47"},{"author":{"id":"U_kgDOBtX_Tw","is_bot":false,"login":"bradenc24","name":""},"headRefName":"Braden-HelpRequestTable-Controller","number":46,"title":"Create HelpRequest Controller, add GET (index) and POST (create) methods ","url":"https://github.com/ucsb-cs156-f23/team02-f23-5pm-2/pull/46"}]
