@@ -36,7 +36,7 @@ public class UCSBDiningCommonsMenuItemsController extends ApiController {
     @Autowired
     UCSBDiningCommonsMenuItemsRepository ucsbDiningCommonsMenuItemsRepository;
 
-    @Operation(summary= "Lists dining common's menu items and which station they are located at")
+    @Operation(summary= "Lists every dining common's menu items and which station they are located at")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
     public Iterable<UCSBDiningCommonsMenuItems> allUCSBDiningMenuCommonsItems() {
@@ -44,7 +44,7 @@ public class UCSBDiningCommonsMenuItemsController extends ApiController {
         return menuItems;
     }
 
-    @Operation(summary= "Create a new date")
+    @Operation(summary= "Create a new menu item for a dining hall.")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
     public UCSBDiningCommonsMenuItems postUCSBDiningCommonsMenuItems(
