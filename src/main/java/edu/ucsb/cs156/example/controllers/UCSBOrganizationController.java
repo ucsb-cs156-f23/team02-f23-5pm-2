@@ -27,6 +27,7 @@ import javax.validation.Valid;
 @RestController
 @Slf4j
 public class UCSBOrganizationController extends ApiController {
+
     @Autowired
     UCSBOrganizationRepository ucsbOrganizationRepository;
 
@@ -34,11 +35,11 @@ public class UCSBOrganizationController extends ApiController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
     public Iterable<UCSBOrganization> allOrganizations() {
-        Iterable<UCSBOrganization> commons = ucsbOrganizationRepository.findAll();
-        return commons;
+        Iterable<UCSBOrganization> organizations = ucsbOrganizationRepository.findAll();
+        return organizations;
     }
 
-    @Operation(summary= "Create a new organizations")
+    @Operation(summary= "Create a new ucsb organization")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
     public UCSBOrganization postOrganization(
@@ -46,17 +47,14 @@ public class UCSBOrganizationController extends ApiController {
         @Parameter(name="orgTranslationShort") @RequestParam String orgTranslationShort,
         @Parameter(name="orgTranslation") @RequestParam String orgTranslation,
         @Parameter(name="inactive") @RequestParam boolean inactive
-        )
+        ) 
         {
-
-        UCSBOrganization commons = new UCSBOrganization();
-        commons.setOrgCode(orgCode);
-        commons.setOrgTranslationShort(orgTranslationShort);
-        commons.setOrgTranslation(orgTranslation);
-        commons.setInactive(inactive);
-
-        UCSBOrganization savedCommons = ucsbOrganizationRepository.save(commons);
-
-        return savedCommons;
+            UCSBOrganization org = new UCSBOrganization();
+            org.setOrgCode(orgCode);
+            org.setOrgTranslationShort(orgTranslationShort);
+            org.setOrgTranslation(orgTranslation);
+            org.setInactive(inactive);
+            UCSBOrganization saved = ucsbOrganizationRepository.save(org);
+            return saved;
     }
 }
