@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @Tag(name = "UCSBOrganizations")
-@RequestMapping("/api/ucsborganizations")
+@RequestMapping("/api/ucsborganization")
 @RestController
 @Slf4j
 public class UCSBOrganizationController extends ApiController {
@@ -33,7 +33,7 @@ public class UCSBOrganizationController extends ApiController {
     @Operation(summary= "List all ucsb organizations")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
-    public Iterable<UCSBOrganization> allCommonss() {
+    public Iterable<UCSBOrganization> allOrganizations() {
         Iterable<UCSBOrganization> commons = ucsbOrganizationRepository.findAll();
         return commons;
     }
@@ -41,7 +41,7 @@ public class UCSBOrganizationController extends ApiController {
     @Operation(summary= "Create a new organizations")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
-    public UCSBOrganization postCommons(
+    public UCSBOrganization postOrganization(
         @Parameter(name="orgCode") @RequestParam String orgCode,
         @Parameter(name="orgTranslationShort") @RequestParam String orgTranslationShort,
         @Parameter(name="orgTranslation") @RequestParam String orgTranslation,

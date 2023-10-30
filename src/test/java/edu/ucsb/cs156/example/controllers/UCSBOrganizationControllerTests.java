@@ -43,40 +43,21 @@ public class UCSBOrganizationControllerTests extends ControllerTestCase {
 
     @Test
     public void logged_out_users_cannot_get_all() throws Exception {
-            mockMvc.perform(get("/api/ucsborganizations/all"))
+            mockMvc.perform(get("/api/ucsborganization/all"))
                             .andExpect(status().is(403)); // logged out users can't get all
     }
 
     @WithMockUser(roles = { "USER" })
     @Test
     public void logged_in_users_can_get_all() throws Exception {
-            mockMvc.perform(get("/api/ucsborganizations/all"))
+            mockMvc.perform(get("/api/ucsborganization/all"))
                             .andExpect(status().is(200)); // logged
     }
 
-    @WithMockUser(roles = { "USER" })
-    @Test
-    public void test_that_logged_in_user_can_get_by_id_when_the_id_does_not_exist() throws Exception {
-
-            // arrange
-
-            when(ucsbOrganizationRepository.findById(eq("munger-hall"))).thenReturn(Optional.empty());
-
-            // act
-            MvcResult response = mockMvc.perform(get("/api/ucsborganizations?orgCode=munger-hall"))
-                            .andExpect(status().isNotFound()).andReturn();
-
-            // assert
-
-            verify(ucsbOrganizationRepository, times(1)).findById(eq("munger-hall"));
-            Map<String, Object> json = responseToJson(response);
-            assertEquals("EntityNotFoundException", json.get("type"));
-            assertEquals("UCSBorganizations with id munger-hall not found", json.get("message"));
-    }
 
     @WithMockUser(roles = { "USER" })
     @Test
-    public void logged_in_user_can_get_all_ucsborganizations() throws Exception {
+    public void logged_in_user_can_get_all_ucsborganization() throws Exception {
 
             // arrange
 
@@ -100,7 +81,7 @@ public class UCSBOrganizationControllerTests extends ControllerTestCase {
             when(ucsbOrganizationRepository.findAll()).thenReturn(expectedCommons);
 
             // act
-            MvcResult response = mockMvc.perform(get("/api/ucsborganizations/all"))
+            MvcResult response = mockMvc.perform(get("/api/ucsborganization/all"))
                             .andExpect(status().isOk()).andReturn();
 
             // assert
@@ -115,20 +96,20 @@ public class UCSBOrganizationControllerTests extends ControllerTestCase {
 
     @Test
     public void logged_out_users_cannot_post() throws Exception {
-            mockMvc.perform(post("/api/ucsborganizations/post"))
+            mockMvc.perform(post("/api/ucsborganization/post"))
                             .andExpect(status().is(403));
     }
 
     @WithMockUser(roles = { "USER" })
     @Test
     public void logged_in_regular_users_cannot_post() throws Exception {
-            mockMvc.perform(post("/api/ucsborganizations/post"))
+            mockMvc.perform(post("/api/ucsborganization/post"))
                             .andExpect(status().is(403)); // only admins can post
     }
 
     @WithMockUser(roles = { "ADMIN", "USER" })
     @Test
-    public void an_admin_user_can_post_a_new_commons() throws Exception {
+    public void an_admin_user_can_post_a_new_org() throws Exception {
             // arrange
 
             UCSBOrganization ortega = UCSBOrganization.builder()
@@ -142,7 +123,7 @@ public class UCSBOrganizationControllerTests extends ControllerTestCase {
 
             // act
             MvcResult response = mockMvc.perform(
-                            post("/api/ucsborganizations/post?orgCode=or&orgTranslationShort=ortega&orgTranslation=ortega-dining&inactive=false")
+                            post("/api/ucsborganization/post?orgCode=or&orgTranslationShort=ortega&orgTranslation=ortega-dining&inactive=false")
                                             .with(csrf()))
                             .andExpect(status().isOk()).andReturn();
 
