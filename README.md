@@ -1,5 +1,14 @@
 # STARTER-team02
 
+| Table                       | Team Member      | Github Id     |
+|-----------------------------|------------------|---------------|
+| `UCSBDiningCommonsMenuItem` | Chinmay Dandekar | ChinDandekar  |
+| `UCSBOrganization`          | Adam Nobunaga    | akainu11      |
+| `RecommendationRequest`     | Alex Xu          | alexkxu       |
+| `MenuItemReview`            | Hancheng Li      | hancheng-li   |
+| `HelpRequest`               | Braden Castillo  | bradenc24     |
+| `Articles`                  | Amgad Hawari     | amgadhawari   |
+
 Instructions: <https://ucsb-cs156.github.io/f23/lab/team02.html>
 
 TODO: change heading above to your repo name, e.g. `# team02-f23-6pm-4`
