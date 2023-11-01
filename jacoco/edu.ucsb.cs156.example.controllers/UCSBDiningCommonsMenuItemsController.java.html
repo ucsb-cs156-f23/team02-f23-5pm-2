@@ -78,5 +78,36 @@ import java.time.LocalDateTime;
 
 <span class="fc" id="L79">        return ucsbDiningCommonsMenuItems;</span>
     }
+
+    @Operation(summary= &quot;Delete a UCSBDiningCommonMenuItem&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @DeleteMapping(&quot;&quot;)
+    public Object deleteUCSBDiningCommonsMenuItems(
+            @Parameter(name=&quot;id&quot;) @RequestParam Long id) {
+<span class="fc" id="L87">        UCSBDiningCommonsMenuItems ucsbDiningCommonsMenuItems = ucsbDiningCommonsMenuItemsRepository.findById(id)</span>
+<span class="fc" id="L88">                .orElseThrow(() -&gt; new EntityNotFoundException(UCSBDiningCommonsMenuItems.class, id));</span>
+
+<span class="fc" id="L90">        ucsbDiningCommonsMenuItemsRepository.delete(ucsbDiningCommonsMenuItems);</span>
+<span class="fc" id="L91">        return genericMessage(&quot;UCSBDiningCommonsMenuItems with id %s deleted&quot;.formatted(id));</span>
+    }
+
+    @Operation(summary= &quot;Update a single menu item&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @PutMapping(&quot;&quot;)
+    public UCSBDiningCommonsMenuItems updateUCSBDiningCommonsMenuItems(
+            @Parameter(name=&quot;id&quot;) @RequestParam Long id,
+            @RequestBody @Valid UCSBDiningCommonsMenuItems incoming) {
+
+<span class="fc" id="L101">        UCSBDiningCommonsMenuItems ucsbDiningCommonsMenuItems = ucsbDiningCommonsMenuItemsRepository.findById(id)</span>
+<span class="fc" id="L102">                .orElseThrow(() -&gt; new EntityNotFoundException(UCSBDiningCommonsMenuItems.class, id));</span>
+
+<span class="fc" id="L104">        ucsbDiningCommonsMenuItems.setDiningCommonsCode(incoming.getDiningCommonsCode());</span>
+<span class="fc" id="L105">        ucsbDiningCommonsMenuItems.setName(incoming.getName());</span>
+<span class="fc" id="L106">        ucsbDiningCommonsMenuItems.setStation(incoming.getStation());</span>
+
+<span class="fc" id="L108">        ucsbDiningCommonsMenuItemsRepository.save(ucsbDiningCommonsMenuItems);</span>
+
+<span class="fc" id="L110">        return ucsbDiningCommonsMenuItems;</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
