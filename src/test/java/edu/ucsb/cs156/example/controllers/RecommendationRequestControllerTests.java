@@ -32,7 +32,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
 @WebMvcTest(controllers = RecommendationRequestController.class)
 @Import(TestConfig.class)
 public class RecommendationRequestControllerTests extends ControllerTestCase {
@@ -127,7 +126,6 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
         LocalDateTime requestTime1 = LocalDateTime.parse("2022-01-01T00:00:00");
         LocalDateTime requestTime2 = LocalDateTime.parse("2022-03-01T00:00:00");
 
-
         RecommendationRequest recommendationRequest1 = RecommendationRequest.builder()
                 .requesterEmail("akxu@ucsb.edu")
                 .professorEmail("cgaucho@ucsb.edu")
@@ -156,8 +154,8 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
 
     @Test
     public void logged_out_users_cannot_get_by_id() throws Exception {
-            mockMvc.perform(get("/api/recommendationrequest?id=1"))
-                            .andExpect(status().is(403)); // logged out users can't get by id
+        mockMvc.perform(get("/api/recommendationrequest?id=1"))
+                .andExpect(status().is(403)); // logged out users can't get by id
     }
 
     @WithMockUser(roles = { "USER" })
@@ -182,7 +180,7 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
 
         // act
         MvcResult response = mockMvc.perform(get("/api/recommendationrequest?id=999"))
-                            .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isOk()).andReturn();
 
         // assert
 
@@ -210,5 +208,60 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
             Map<String, Object> json = responseToJson(response);
             assertEquals("EntityNotFoundException", json.get("type"));
             assertEquals("RecommendationRequest with id 999 not found", json.get("message"));
+    }
+
+    // Tests for DELETE /api/recommendationrequest?id=...
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void admin_can_delete_a_recommendation_request() throws Exception {
+        // arrange
+
+        LocalDateTime requestTime1 = LocalDateTime.parse("2023-01-01T00:00:00");
+        LocalDateTime requestTime2 = LocalDateTime.parse("2023-12-31T23:59:59");
+
+        RecommendationRequest recommendationRequest1 = RecommendationRequest.builder()
+                .requesterEmail("akxu@ucsb.edu")
+                .professorEmail("cgaucho@ucsb.edu")
+                .explanation("Need recommendation letter for job application.")
+                .dateRequested(requestTime1)
+                .dateNeeded(requestTime2)
+                .done(true)
+                .build();
+
+        when(recommendationRequestRepository.findById(eq(123L))).thenReturn(Optional.of(recommendationRequest1));
+
+        // act
+        MvcResult response = mockMvc.perform(
+                delete("/api/recommendationrequest?id=123")
+                        .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+
+        // assert
+        verify(recommendationRequestRepository, times(1)).findById(123L);
+        verify(recommendationRequestRepository, times(1)).delete(any());
+
+        Map<String, Object> json = responseToJson(response);
+        assertEquals("RecommendationRequest with id 123 deleted", json.get("message"));
+    }
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void admin_tries_to_delete_non_existant_recommendation_request_and_gets_right_error_message()
+                    throws Exception {
+            // arrange
+
+            when(recommendationRequestRepository.findById(eq(123L))).thenReturn(Optional.empty());
+
+            // act
+            MvcResult response = mockMvc.perform(
+                            delete("/api/recommendationrequest?id=123")
+                                            .with(csrf()))
+                            .andExpect(status().isNotFound()).andReturn();
+
+            // assert
+            verify(recommendationRequestRepository, times(1)).findById(123L);
+            Map<String, Object> json = responseToJson(response);
+            assertEquals("RecommendationRequest with id 123 not found", json.get("message"));
     }
 }
