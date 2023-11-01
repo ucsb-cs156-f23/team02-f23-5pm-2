@@ -1,7 +1,6 @@
 package edu.ucsb.cs156.example.controllers;
 
 import edu.ucsb.cs156.example.entities.MenuItemReview;
-import edu.ucsb.cs156.example.entities.UCSBDate;
 import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.MenuItemReviewRepository;
 
@@ -40,13 +39,14 @@ public class MenuItemReviewController extends ApiController{
 
     @Operation(summary= "List all menu item reviews")
     @PreAuthorize("hasRole('ROLE_USER')")
-
     @GetMapping("/all")
     public Iterable<MenuItemReview> allMenuItemReviews() {
         Iterable<MenuItemReview> reviews = menuItemReviewRepository.findAll();
         return reviews;
     }
 
+    @Operation(summary= "Create a new menu item review")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
     public MenuItemReview postMenuItemReview(
             @Parameter(name="itemId") @RequestParam Long itemId,
@@ -70,5 +70,16 @@ public class MenuItemReviewController extends ApiController{
         MenuItemReview savedMenuItemReview = menuItemReviewRepository.save(menuItemReview);
 
         return savedMenuItemReview;
+    }
+
+    @Operation(summary= "Get a single menu item review")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("")
+    public MenuItemReview getById(
+            @Parameter(name="id") @RequestParam Long id) {
+        MenuItemReview menuItemReview = menuItemReviewRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(MenuItemReview.class, id));
+
+        return menuItemReview;
     }
 }
