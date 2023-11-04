@@ -32,9 +32,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@WebMvcTest(controllers = ArticlessController.class)
+@WebMvcTest(controllers = ArticlesController.class)
 @Import(TestConfig.class)
-public class ArticlessControllerTests extends ControllerTestCase {
+public class ArticlesControllerTests extends ControllerTestCase {
 
         @MockBean
         ArticlesRepository articlesRepository;
@@ -68,7 +68,7 @@ public class ArticlessControllerTests extends ControllerTestCase {
                                 .title("ArticleTitle")
                                 .url("https://google.com")
                                 .email("ucsb@gmail.com")
-                                .explaination("how to do this")
+                                .explanation("how to do this")
                                 .dateAdded(ldt1)
                                 .build();
 
@@ -78,7 +78,7 @@ public class ArticlessControllerTests extends ControllerTestCase {
                                 .title("ArticleTitle2")
                                 .url("https://google.com")
                                 .email("ucsb@gmail.com")
-                                .explaination("how to do this")
+                                .explanation("how to do this")
                                 .dateAdded(ldt1)
                                 .build();
 
@@ -125,7 +125,7 @@ public class ArticlessControllerTests extends ControllerTestCase {
                                 .title("ArticleTitle1")
                                 .url("https://google.com")
                                 .email("ucsb@gmail.com")
-                                .explaination("how to do this")
+                                .explanation("how to do this")
                                 .dateAdded(ldt1)
                                 .build();
 
@@ -145,4 +145,4 @@ public class ArticlessControllerTests extends ControllerTestCase {
         }
 }
     
-}
+
