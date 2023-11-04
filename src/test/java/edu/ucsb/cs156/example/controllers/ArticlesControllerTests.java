@@ -9,6 +9,8 @@ import edu.ucsb.cs156.example.repositories.ArticlesRepository;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+
+import org.springframework.http.MediaType;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -78,7 +80,7 @@ public class ArticlesControllerTests extends ControllerTestCase {
                                 .url("https://google.com")
                                 .email("ucsb@gmail.com")
                                 .explanation("how to do this")
-                                .dateAdded(ldt1)
+                                .dateAdded(ldt2)
                                 .build();
 
                 ArrayList<Articles> expectedDates = new ArrayList<>();
@@ -190,6 +192,85 @@ public class ArticlesControllerTests extends ControllerTestCase {
                 verify(articlesRepository, times(1)).findById(15L);
                 Map<String, Object> json = responseToJson(response);
                 assertEquals("Articles with id 15 not found", json.get("message"));
+ 
+       }
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void admin_can_edit_an_existing_ucsbdate() throws Exception {
+                // arrange
+
+                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+                LocalDateTime ldt2 = LocalDateTime.parse("2023-01-03T00:00:00");
+
+                Articles articlesOrg = Articles.builder()
+                                .title("ArticleTitle")
+                                .url("https://google.com")
+                                .email("ucsb@gmail.com")
+                                .explanation("how to do this")
+                                .dateAdded(ldt1)
+                                .build();
+
+                Articles articlesEdited = Articles.builder()
+                                .title("ArqticleTitle2")
+                                .url("https://helklo.com")
+                                .email("ucsbwwe322@gmail.com")
+                                .explanation("how to do this!!!")
+                                .dateAdded(ldt2)
+                                .build();
+
+                String requestBody = mapper.writeValueAsString(articlesEdited);
+
+                when(articlesRepository.findById(eq(67L))).thenReturn(Optional.of(articlesOrg));
+
+                // act
+                MvcResult response = mockMvc.perform(
+                                put("/api/articles?id=67")
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .characterEncoding("utf-8")
+                                                .content(requestBody)
+                                                .with(csrf()))
+                                .andExpect(status().isOk()).andReturn();
+
+                // assert
+                verify(articlesRepository, times(1)).findById(67L);
+                verify(articlesRepository, times(1)).save(articlesEdited); // should be saved with correct user
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(requestBody, responseString);
+        }
+
+        
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void admin_cannot_edit_ucsbdate_that_does_not_exist() throws Exception {
+                // arrange
+
+                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+                Articles articles = Articles.builder()
+                                .title("ArticleTitle1")
+                                .url("https://google.com")
+                                .email("ucsb@gmail.com")
+                                .explanation("how to do this")
+                                .dateAdded(ldt1)
+                                .build();
+                String requestBody = mapper.writeValueAsString(articles);
+
+                when(articlesRepository.findById(eq(67L))).thenReturn(Optional.empty());
+
+                // act
+                MvcResult response = mockMvc.perform(
+                                put("/api/articles?id=67")
+                                                 .contentType(MediaType.APPLICATION_JSON)
+                                                .characterEncoding("utf-8")
+                                                .content(requestBody)
+                                                .with(csrf()))
+                                .andExpect(status().isNotFound()).andReturn();
+
+                // assert
+                verify(articlesRepository, times(1)).findById(67L);
+                Map<String, Object> json = responseToJson(response);
+                assertEquals("Articles with id 67 not found", json.get("message"));
+
         }
 }
-    
+
