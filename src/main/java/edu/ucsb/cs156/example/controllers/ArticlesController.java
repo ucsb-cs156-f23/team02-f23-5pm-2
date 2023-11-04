@@ -5,7 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import edu.ucsb.cs156.example.entities.Articles;
-
+import edu.ucsb.cs156.example.entities.UCSBDate;
+import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.ArticlesRepository;
 
 
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +26,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 @RequestMapping("/api/articles")
 @RestController
 @Slf4j
-public class ArticlesController {
+public class ArticlesController extends ApiController {
     @Autowired
     ArticlesRepository articlesRepository;
 
@@ -64,4 +66,16 @@ public class ArticlesController {
         return savedUcsbDate;
     }
  
+    @Operation(summary= "delete an Article")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("")
+    public Object deleteArticles(
+            @Parameter(name="id") @RequestParam Long id) {
+        Articles articles = articlesRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Articles.class, id));
+
+        articlesRepository.delete(articles);
+        return genericMessage("Articles with id %s deleted".formatted(id));
+    }
+
 }
