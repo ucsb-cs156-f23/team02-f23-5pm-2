@@ -1,27 +1,31 @@
 package edu.ucsb.cs156.example.controllers;
 
+import edu.ucsb.cs156.example.entities.Articles;
+import edu.ucsb.cs156.example.errors.EntityNotFoundException;
+import edu.ucsb.cs156.example.repositories.ArticlesRepository;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import edu.ucsb.cs156.example.entities.Articles;
-import edu.ucsb.cs156.example.entities.UCSBDate;
-import edu.ucsb.cs156.example.errors.EntityNotFoundException;
-import edu.ucsb.cs156.example.repositories.ArticlesRepository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import javax.validation.Valid;
+
+import java.time.LocalDateTime;
 @Tag(name = "Articles")
 @RequestMapping("/api/articles")
 @RestController
@@ -61,9 +65,9 @@ public class ArticlesController extends ApiController {
         articles.setExplanation(explanation);
         articles.setDateAdded(dateAdded);
 
-        Articles savedUcsbDate = articlesRepository.save(articles);
+        Articles savedArticles = articlesRepository.save(articles);
 
-        return savedUcsbDate;
+        return savedArticles;
     }
  
     @Operation(summary= "delete an Article")
@@ -78,4 +82,35 @@ public class ArticlesController extends ApiController {
         return genericMessage("Articles with id %s deleted".formatted(id));
     }
 
+    @Operation(summary= "Update a single article")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("")
+    public Articles updateArticles(
+            @Parameter(name="id") @RequestParam Long id,
+            @RequestBody @Valid Articles incoming) {
+
+        Articles articles = articlesRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Articles.class, id));
+
+        articles.setTitle(incoming.getTitle());
+        articles.setUrl(incoming.getUrl());
+        articles.setEmail(incoming.getEmail());
+        articles.setExplanation(incoming.getExplanation());
+        articles.setDateAdded(incoming.getDateAdded());
+
+        articlesRepository.save(articles);
+
+        return articles;
+    }
+   
+    @Operation(summary= "Get a single article")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("")
+    public Articles getById(
+            @Parameter(name="id") @RequestParam Long id) {
+        Articles articles = articlesRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Articles.class, id));
+
+        return articles;
+    }
 }
